@@ -1,3 +1,10 @@
+//initialize new socket.io client and keep a reference to it under the socket constant
+const socket = io();
+
+socket.on('message', ({ author, content }) => appendMessage(author, content));
+
+
+
 const loginForm = document.getElementById('welcome-form');
 const messagesSection = document.getElementById('messages-section');
 const messagesList = document.getElementById('messages-list');
@@ -15,6 +22,7 @@ const login = () => {
         messagesSection.classList.add('show');
         loginForm.classList.remove('show');
         userName = user;
+        socket.emit('user', { author: userName, id: socket.id });
     }
 };
 
@@ -49,5 +57,20 @@ loginForm.addEventListener('submit', (event) => {
 
 addMessageForm.addEventListener('submit', (event) => {
     event.preventDefault();
-    addMessage();
+    sendMessage(event);
 });
+
+function sendMessage(e) {
+    e.preventDefault();
+  
+    let messageContent = messageContentInput.value;
+  
+    if(!messageContent.length) {
+      alert('You have to type something!');
+    }
+    else {
+      addMessage(userName, messageContent);
+      socket.emit('message', { author: userName, content: messageContent });
+      messageContentInput.value = '';
+    }
+  }
