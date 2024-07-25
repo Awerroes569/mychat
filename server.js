@@ -47,10 +47,15 @@ io.on('connection', (socket) => {
       });
     socket.on('user', ({ author, id }) => {
         addUser(author,id);
+        const message = { author: 'Chat Bot', content: `<i>${author} has joined the conversation!</i>` };
+        socket.broadcast.emit('message', message);
     });
     socket.on('disconnect', () => {
         console.log('Oh, socket ' + socket.id + ' has left');
+        const user = users.find(user => user.id === socket.id);
         removeUser(socket.id);
+        const message = { author: 'Chat Bot', content: `<i>${user.name} has left the conversation!</i>` };
+        socket.broadcast.emit('newUser', message);
     });
     console.log('I\'ve added a listener on message event \n');
   });

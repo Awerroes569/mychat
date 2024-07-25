@@ -2,6 +2,7 @@
 const socket = io();
 
 socket.on('message', ({ author, content }) => appendMessage(author, content));
+socket.on('newUser', ({ author, content }) => appendMessage(author, content));
 
 
 
